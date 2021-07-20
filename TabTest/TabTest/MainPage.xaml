@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="TabTest.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:a="clr-namespace:TabTest"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    x:Name="PageRoot">
+    <ContentPage.Resources>
+        <a:TabSelectionChangedEventArgsConverter x:Key="TabSelectionChangedEventArgsConverter" />
+    </ContentPage.Resources>
+    <StackLayout>
+
+        <xct:TabView
+            TabItemsSource="{Binding Tabs}"
+            TabStripBackgroundColor="LightGray"
+            TabStripHeight="48"
+            TabStripPlacement="Top">
+
+            <xct:TabView.TabViewItemDataTemplate>
+                <DataTemplate>
+                    <StackLayout
+                        BackgroundColor="CornflowerBlue"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand">
+                        <Label
+                            FontAttributes="Bold"
+                            HeightRequest="40"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding TabTitle}"
+                            VerticalTextAlignment="Center" />
+                    </StackLayout>
+                </DataTemplate>
+            </xct:TabView.TabViewItemDataTemplate>
+
+            <xct:TabView.Behaviors>
+                <xct:EventToCommandBehavior
+                    Command="{Binding TabChangedCommand}"
+                    EventArgsConverter="{StaticResource TabSelectionChangedEventArgsConverter}"
+                    EventName="SelectionChanged" />
+            </xct:TabView.Behaviors>
+
+            <xct:TabView.TabContentDataTemplate>
+                <DataTemplate>
+                    <!--  binding context is the TabHeader in Tabs  -->
+                    <!--  need to bind the refreshview and collectionview to the VM properties  -->
+                    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+
+                        <CollectionView EmptyView="No orders!" ItemsSource="{Binding Orders}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackLayout
+                                        Padding="5,2"
+                                        BackgroundColor="AntiqueWhite"
+                                        HorizontalOptions="FillAndExpand">
+                                        <Label
+                                            FontSize="Medium"
+                                            HeightRequest="25"
+                                            Text="{Binding CustomerName}"
+                                            TextColor="Black" />
+                                        <StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                                            <Label
+                                                FontSize="Default"
+                                                HorizontalOptions="StartAndExpand"
+                                                Text="{Binding OrderId}"
+                                                TextColor="SlateGray" />
+                                            <Label
+                                                FontSize="Default"
+                                                HorizontalOptions="End"
+                                                Text="{Binding Slot}"
+                                                TextColor="SlateGray" />
+                                        </StackLayout>
+                                    </StackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                    </RefreshView>
+                </DataTemplate>
+            </xct:TabView.TabContentDataTemplate>
+
+        </xct:TabView>
+    </StackLayout>
+
+</ContentPage>
