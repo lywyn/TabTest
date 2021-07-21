@@ -44,9 +44,11 @@
                 <DataTemplate>
                     <!--  binding context is the TabHeader in Tabs  -->
                     <!--  need to bind the refreshview and collectionview to the VM properties  -->
-                    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
 
-                        <CollectionView EmptyView="No orders!" ItemsSource="{Binding Orders}">
+                    <!--  works but sometimes the tab does nto refresh and IsRefreshing is not updating from VM to UI (OneWay)  -->
+                    <RefreshView Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.RefreshCommand}" IsRefreshing="{Binding Source={x:Reference PageRoot}, Path=BindingContext.IsRefreshing, Mode=OneWay}">
+
+                        <CollectionView EmptyView="No orders!" ItemsSource="{Binding Source={x:Reference PageRoot}, Path=BindingContext.Orders}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <StackLayout

@@ -24,9 +24,7 @@ namespace TabTest
     {
         public List<TabHeader> Tabs { get; set; }
         public ObservableCollection<Order> Orders { get; set; }
-        public int CurrentTotal => AllOrders?.Count ?? 0;
-        public string CurrentTabName => ((OrderStatus)CurrentTabIndex).ToString();
-        [AlsoNotifyFor(nameof(CurrentTabName), nameof(CurrentTotal))]
+        public int TotalOrders { get; set; }
         public int CurrentTabIndex { get; set; }
         public ICommand TabChangedCommand { get; set; }
         public bool IsRefreshing { get; set; }
@@ -81,7 +79,7 @@ namespace TabTest
             if (IsRefreshing) return;
 
             DownloadOrders();
-            await Task.Delay(1500); // fake some delay from API
+            await Task.Delay(3000); // fake some delay from API
             LoadOrders();
 
             IsRefreshing = false;
@@ -89,7 +87,7 @@ namespace TabTest
 
         void LoadOrders()
         {
-            Tabs[CurrentTabIndex].Orders = new ObservableCollection<Order>(AllOrders.Where(x => (int)x.Status == CurrentTabIndex));
+            Orders = new ObservableCollection<Order>(AllOrders.Where(x => (int)x.Status == CurrentTabIndex));
             UpdateTabCounts();
         }
 
@@ -100,6 +98,7 @@ namespace TabTest
             {
                 tab.Count = AllOrders.Count(x => (int)x.Status == tab.TabIndex);
             }
+            TotalOrders = AllOrders?.Count ?? 0;
         }
     }
 
@@ -110,7 +109,6 @@ namespace TabTest
         public int Count { get; set; }
         public int TabIndex { get; set; }
         public string TabTitle => $"{TabName} ({Count})";
-        public ObservableCollection<Order> Orders { get; set; }
     }
 
     [AddINotifyPropertyChangedInterface]
