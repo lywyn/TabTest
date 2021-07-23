@@ -50,11 +50,12 @@ namespace TabTest
             TabChangedCommand = new Command<int>(TabSelectionChanged);
             RefreshCommand = new Command(async () => await RefreshOrders());
             CurrentTabIndex = 0;
+            TabChangedCommand.Execute(0);
         }
 
         void DownloadOrders()
         {
-            Randomizer.Seed = new Random(8367363);
+            Randomizer.Seed = new Random(DateTime.Now.Millisecond);
 
             string[] slots = new string[] { "08:00 - 12:00", "12:00 - 16:00", "16:00 - 20:00" };
 
@@ -70,6 +71,7 @@ namespace TabTest
 
         void TabSelectionChanged(int newTabPosition)
         {
+            System.Diagnostics.Debug.WriteLine($"*** TabSelectionChanged({newTabPosition})");
             CurrentTabIndex = Tabs[newTabPosition].TabIndex;
             LoadOrders();
         }
@@ -77,6 +79,7 @@ namespace TabTest
         async Task RefreshOrders()
         {
             if (IsRefreshing) return;
+            IsRefreshing = true;
 
             DownloadOrders();
             await Task.Delay(3000); // fake some delay from API
@@ -88,6 +91,9 @@ namespace TabTest
         void LoadOrders()
         {
             Orders = new ObservableCollection<Order>(AllOrders.Where(x => (int)x.Status == CurrentTabIndex));
+            //Orders.Clear();
+            //Orders.AddRange(AllOrders.Where(x => (int)x.Status == CurrentTabIndex));
+            System.Diagnostics.Debug.WriteLine($"*** LoadOrders({CurrentTabIndex}) = {Orders.Count} orders");
             UpdateTabCounts();
         }
 
